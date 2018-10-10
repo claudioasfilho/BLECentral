@@ -39,6 +39,8 @@
 #define CHARACTERISTICS_FOUND					5
 #define ENABLING_NOTIFY   						6
 #define NOTIFY_ENABLED								7
+#define ENABLING_WRITE   						  8
+#define WRITE_ENABLED									9
 
 #define NOTIFY_CHAR_ITEM							1
 #define RW_CHAR_ITEM									2
@@ -159,13 +161,14 @@ static uint8_t Process_scan_response(struct gecko_msg_le_gap_scan_response_evt_t
 }
 
 
-
+uint8_t writeCounter = 0;
 /***********************************************************************************************//**
  *  \brief  Event handler function.
  *  \param[in] evt Event pointer.
  **************************************************************************************************/
 void appHandleEvents(struct gecko_cmd_packet *evt)
 {
+
   if (NULL == evt) {
     return;
   }
@@ -309,12 +312,18 @@ void appHandleEvents(struct gecko_cmd_packet *evt)
       					if (evt->data.evt_gatt_procedure_completed.result == 0) {
       						printf("OK --- >Notification enabled.\r\n");
       						currentState = NOTIFY_ENABLED;
+									//Start SoftTimer for Write operations every 100ms
+									gecko_cmd_hardware_set_soft_timer(3277, 0, 0);
+									printf("OK --- > Central will Write to Server every 100ms \r\n");
+									currentState = ENABLING_WRITE;
+
       					} else {
       						printf("Enable notification failed, error code = %d, try the handle next to characteristic.\r\n", evt->data.evt_gatt_procedure_completed.result);
       						uint8_t buf[2] = {
       								0x01,
       								0x00 };
       						gecko_cmd_gatt_write_characteristic_value(connHandle, notifyHandle + 1, 2, buf);
+
       					}
       				}
 			break;
@@ -331,6 +340,16 @@ void appHandleEvents(struct gecko_cmd_packet *evt)
     					gecko_cmd_le_gap_discover(le_gap_discover_generic);
 			break;
 
+			case gecko_evt_hardware_soft_timer_id:
+
+     	  writeCounter++;
+
+     	  //It sends the notifications
+				gecko_cmd_gatt_write_characteristic_value(connHandle, rwHandle, 1, &writeCounter);
+
+     	  printf("OK --- > Writing to Server %d \r\n", writeCounter);
+
+         break;
 
     default:
       break;

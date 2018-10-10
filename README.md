@@ -27,8 +27,12 @@ GNU GCC Compiler: Apple LLVM version 9.0.0 (clang-900.0.39.2)
 Target: x86_64-apple-darwin16.7.0
 Thread model: posix
 
+
 Development Board: Silicon Labs WSTK with BRD4159A (EFR32MG13P632F512GM48)
 
+Usage:
+
+./exe/BLECentral /dev/tty.(Serial Port) 115200
 
 Target Device Images:
 
