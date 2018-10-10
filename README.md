@@ -32,7 +32,17 @@ Development Board: Silicon Labs WSTK with BRD4159A (EFR32MG13P632F512GM48)
 
 Usage:
 
+In order to avoid modifying the Make File, please clone this to the following folder on the Bluetooth SDK structure.
+
+/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/gecko_sdk_suite/v2.4/app/bluetooth/examples_ncp_host/
+
+It should compile as is.
+
+In order to execute it, please use the following command:
+
 ./exe/BLECentral /dev/tty.(Serial Port) 115200
+
+If you desire to use this with a different Host, you will need to modify the Makefile in order to accommodate the cross compiler.
 
 Target Device Images:
 
